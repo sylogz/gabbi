@@ -19,8 +19,7 @@ if [ -z "$1" ] ; then
 	echo -n "Pass ($(echo $tpass | sed -r 's/./\*/g')):" ; read pass
 	echo "Enter the mail-recipiant you want to send your report to (or leave empty)"
 	echo -n "Mail ($tmail):" ; read mail
-fi
-	
+fi	
 [ -n "$name" ] || name=$tname
 [ -n "$user" ] || user=$tuser
 [ -n "$pass" ] || pass=$tpass
@@ -69,5 +68,5 @@ if [ -n "$mail" ] ; then
 fi
 
 echo -n "Clean up ... "
-#rm -r tmp
+rm -r tmp
 echo "Done"
