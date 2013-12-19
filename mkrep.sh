@@ -3,9 +3,13 @@
 
 if [ -z "$1" ] ; then
 	echo "Add an argument to skip these questions."
+	echo "Enter the name that the email should end with (or leavel empty)"
 	echo -n "Name ($tname):" ; read name
+	echo "Enter the username to your TRACE3 account"
 	echo -n "User ($tuser):" ; read user
+	echo "Enter the password to your TRACE3 account"
 	echo -n "Pass ($(echo $tpass | sed -r 's/./\*/g')):" ; read pass
+	echo "Enter the mail-recipiant you want to send your report to (or leave empty)"
 	echo -n "Mail ($tmail):" ; read mail
 fi
 	
