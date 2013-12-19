@@ -1,4 +1,12 @@
 #!/bin/sh -e
+
+## BSD-3
+# (c) 2013 - Jonas Zetterberg
+# 
+# Authors: 
+# * Jonas Zetterberg
+# * Per Hallsmark
+
 ! [ -f $HOME/.mkrrc ] || . $HOME/.mkrrc
 
 if [ -z "$1" ] ; then

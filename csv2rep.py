@@ -3,6 +3,13 @@ import sys
 import os
 import random
 
+## BSD-3
+# (c) 2013 - Jonas Zetterberg
+# 
+# Authors: 
+# * Jonas Zetterberg
+# * Per Hallsmark
+
 if len(sys.argv) <= 1:
 	print ""
 	print "Usage", sys.argv[0], " [cvs-file] <name>"
