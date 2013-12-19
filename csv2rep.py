@@ -38,7 +38,7 @@ def mk():
 		else:
 			print parts[2]
 			raise 
-		if parts[3] == "0":
+		if parts[3] == "1":
 			print rc(INTERNAL),
 		else:
 			print rc(EXTERNAL),
