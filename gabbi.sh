@@ -7,7 +7,10 @@
 # * Jonas Zetterberg
 # * Per Hallsmark
 
-! [ -f $HOME/.mkrrc ] || . $HOME/.mkrrc
+RCFILE="$HOME/.gabbirc"
+
+! [ -f $HOME/.mkrrc ] || mv $HOME/.mkrrc $RCFILE
+! [ -f $RCFILE ] || . $RCFILE
 
 if [ -z "$1" ] ; then
 	echo "Add an argument to skip these questions."
@@ -47,11 +50,11 @@ wget -q --cookies=on --keep-session-cookies --load-cookies=tmp/cookie.txt \
 echo "Done"
 
 echo -n "Saving info ... "
-echo "tuser='$user'" > $HOME/.mkrrc
-echo "tpass='$pass'" >> $HOME/.mkrrc
-echo "tmail='$mail'" >> $HOME/.mkrrc
-echo "tname='$name'" >> $HOME/.mkrrc
-chmod 600 $HOME/.mkrrc
+echo "tuser='$user'" > $RCFILE
+echo "tpass='$pass'" >> $RCFILE
+echo "tmail='$mail'" >> $RCFILE
+echo "tname='$name'" >> $RCFILE
+chmod 600 $RCFILE
 echo "Done"
 
 echo ""
