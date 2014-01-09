@@ -20,6 +20,8 @@ def mk():
 	DELIVERED = ["Completed", "Delivered", "Done with"]
 	WORKING_ON = ["Working on", "Working with", "Not done with"]
 	
+	NOT_STARTED = ["Retrived task", "New task", "Starting with"]
+
 	INTERNAL = ["my", "internal"]
 	EXTERNAL = ["external", "ericsson"]
 	
@@ -38,10 +40,12 @@ def mk():
 		if parts[2] == "Status":
 			continue
 		print "    ",
-		if parts[2] == "Delivered":
+		if parts[2] == "Delivered" or parts[2] == "Deleted":
 			print rc(DELIVERED),
 		elif parts[2] == "In Progress":
 			print rc(WORKING_ON),
+		elif parts[2] == "Not Started":
+			print rc(NOT_STARTED),
 		else:
 			print parts[2]
 			raise 
@@ -83,4 +87,5 @@ try:
 	mk()
 except:
 	print "Unexpected error:", sys.exc_info()[0]
+	#raise
 	exit(1)
