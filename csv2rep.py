@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import sys
 import os
 import random
 
@@ -10,13 +9,8 @@ import random
 # * Jonas Zetterberg
 # * Per Hallsmark
 
-if len(sys.argv) <= 1:
-	print ""
-	print "Usage", sys.argv[0], " [cvs-file] <name>"
-	print
-	exit(1)
-
-def mk():
+def Csv2Rep(csv):
+	ret = ""
 	DELIVERED = ["Completed", "Delivered", "Done with"]
 	WORKING_ON = ["Working on", "Working with", "Not done with"]
 	
@@ -32,60 +26,50 @@ def mk():
 	rc = random.choice
 	wl=0
 	
-	f = open(sys.argv[1])
-	
-	print "1) What tasks I worked on during this week?"
-	for line in f:
-		parts=[ p.strip("\" \\\n") for p in line.split(",") ]
-		if parts[2] == "Status":
-			continue
-		print "    ",
-		if parts[2] == "Delivered" or parts[2] == "Deleted":
-			print rc(DELIVERED),
-		elif parts[2] == "In Progress":
-			print rc(WORKING_ON),
-		elif parts[2] == "Not Started":
-			print rc(NOT_STARTED),
+	ret += "1) What tasks I worked on during this week?\n"
+	for row in csv:
+		if row[2] == "Status":
+			continue # Skip first row FIXME: use as dict
+		ret += "    "
+		if row[2] == "Delivered" or row[2] == "Deleted":
+			ret += rc(DELIVERED)
+		elif row[2] == "In Progress":
+			ret += rc(WORKING_ON)
+		elif row[2] == "Not Started":
+			ret += rc(NOT_STARTED)
 		else:
-			print parts[2]
+			print "AAARGH: Status type not found, please add and submit"
+			print row[2]
 			raise 
-		if parts[3] == "1":
-			print rc(INTERNAL),
+		if row[3] == "1":
+			ret += rc(INTERNAL)
 		else:
-			print rc(EXTERNAL),
-		print rc(ASSIGNMENT), "to", parts[6].lower(),
+			ret += rc(EXTERNAL)
+		ret += rc(ASSIGNMENT) + "to" + row[5].lower()
 		if ADD_LINK:
-			print "(%s)" % parts[4]
+			ret += "(%s)" % row[4]
 		else:
-			print "."
+			ret += "."
+		ret += "\n"
 		wl = wl+1;
 	
-	print "2) Anything preventing me to accomplish the tasks?"
-	print "     Not that I know of."
+	ret += "2) Anything preventing me to accomplish the tasks?\n"
+	ret += "     Not that I know of.\n"
 	
-	print "3) My workload (I am working more than normal time? Less?)"
+	ret += "3) My workload (I am working more than normal time? Less?)\n"
 	if wl <= 4:
-		print "     Normal workload"
+		ret += "     Normal workload\n"
 	elif wl <= 6:
-		print "     High workload"
+		ret += "     High workload\n"
 	elif wl <= 8:
-		print "     Very high workload"
+		ret += "     Very high workload\n"
 	else:
-		print "     I am hitting the wall!"
+		ret += "     I am hitting the wall!\n"
 	
-	print "4) Any new opportunity for business I have heard?"
+	ret += "4) Any new opportunity for business I have heard?\n"
 	if wl < 5:
-		print "     No" 
+		ret += "     No\n" 
 	else:
-		print "     There seems to be a need for more consultants at my workplace"
+		ret += "     There seems to be a need for more consultants at my workplace"
 	
-	if len(sys.argv) >= 3:
-		print ""
-		print "//", sys.argv[2]
-
-try:
-	mk()
-except:
-	print "Unexpected error:", sys.exc_info()[0]
-	#raise
-	exit(1)
+	return ret
