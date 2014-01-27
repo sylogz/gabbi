@@ -19,6 +19,7 @@ if len(sys.argv) <= 1:
 def mk():
 	DELIVERED = ["Completed", "Delivered", "Done with"]
 	WORKING_ON = ["Working on", "Working with", "Not done with"]
+	COMPLETED = ["Finished with", "Completed"]	
 	
 	NOT_STARTED = ["Retrived task", "New task", "Starting with"]
 
@@ -46,8 +47,11 @@ def mk():
 			print rc(WORKING_ON),
 		elif parts[2] == "Not Started":
 			print rc(NOT_STARTED),
+		elif parts[2] == "Completed":
+			print rc(COMPLETED),
 		else:
-			print parts[2]
+			print parts
+			print "Issue with " + parts[2]
 			raise 
 		if parts[3] == "1":
 			print rc(INTERNAL),
