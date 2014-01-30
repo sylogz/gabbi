@@ -37,10 +37,15 @@ while len(sys.argv) > 1:
 		exit(1)
 	del sys.argv[1]
 
-def log(string):
+
+def info(string = '\n'):
+	sys.stdout.write(string)
+	sys.stdout.flush()
+
+def log(string = '\n'):
 	if quiet:
 		return
-	print string
+	info(string)
 
 with open(conffile, "rb") as f:
 	r = f.readline()
@@ -52,44 +57,45 @@ with open(conffile, "rb") as f:
 	for row in r:
 		conf[row[0]] = row[1] 
 
-if not quiet:
-	print ""
-	print "Current configuration:"
-	print ""
-	for row in conf:
-		print " " + row.title() + " : ",
-		if row.lower() == "pass":
-			print "*" * len(conf[row])
+def ask(outp, cval, passwd=False):
+	info(outp)
+	if cval != "":
+		if passwd:
+			info("(" + "*" * len(cval) + ") :")
 		else:
-			print conf[row]
+			info("(" + cval + ") :")
+	else:
+		info(":")
+	v = sys.stdin.readline().strip()
+	if v == '':
+		return cval
+	if v == '.':
+		return ''
+	return v
 
-	print ""
-	print "Use this configuration (Y/n)? ",
+if not quiet:
+	info()
+	info("Current configuration:\n")
+	info()
+	for row in conf:
+		info(" " + row.title() + " : ")
+		if row.lower() == "pass":
+			info("*" * len(conf[row]))
+		else:
+			info(conf[row])
+		info("\n")
+
+	info()
+	info("Use this configuration (Y/n) :")
 	ok=sys.stdin.readline().strip()
 
 	if len(ok) != 0 and ok.lower()[0] != "y":
-		print "Use dot (.) to keep configuration value and ^c to exit."
-		print ""
-		print " Your name ("+conf['name']+") :",
-		v = sys.stdin.readline().strip()
-		if v != '.':
-			conf['name'] = v
-
-		print "Trace3 User ("+conf['user']+") :",
-		v = sys.stdin.readline().strip()
-		if v != '.':
-			conf['user'] = v
-
-		print "Trace3 Password ("+conf['pass']+") :",
-		v = sys.stdin.readline().strip()
-		if v != '.':
-			conf['pass'] = v
-		
-
-		print "Auto mail to ("+conf['mail']+") :",
-		v = sys.stdin.readline().strip()
-		if v != '.':
-			conf['mail'] = v
+		info("Use dot (.) to clear configuration value, enter to keep and ^c to exit.\n")
+		info()
+		conf['name'] = ask("Your name", conf['name'])
+		conf['user'] = ask("Trace3 User", conf['user'])
+		conf['pass'] = ask("Trace3 Password", conf['pass'], True)
+		conf['mail'] = ask("EMail to", conf['mail'])
 
 		f = open(conffile, "w+")
 		f.write(conffilemagic + "\r\n")
@@ -98,30 +104,37 @@ if not quiet:
 			w.writerow([c, conf[c]])
 		f.close()
 
-log("")
-log("Logging in to trace3")
+log()
+log("Logging in to trace3 ... ")
 t3 = Trace3(conf['user'], conf['pass'])
 if not t3.login():
 	raise "Could not login"
 	exit(1)
-log("Getting csv report")
+log("Done\nGetting csv report ... ")
 r = csv.reader(t3.getcsv(), delimiter=',', quotechar='"')
-log("Logging out from trace3")
+log("Done\nLogging out from trace3 ... ")
 t3.logout()
-log("Generating report")
-ret = Csv2Rep(r)
-log("")
-print ""
-print ret
-print ""
-log("")
+log("Done\nGenerating report ... ")
+try:
+	ret = Csv2Rep(r)
+except:
+	print r
+	raise
+log("Done\n")
+
+ret += "\n// " + conf['name']
+log("---\n")
+info()
+info(ret)
+info()
+log("\n---\n")
 if conf['mail'] != "":
 	if not quiet:
-		print "Send this as mail to "+conf['mail']+" with from and bcc " + conf['user'] + " (Y/n) :",
+		info("Send this as mail to "+conf['mail']+" with from and bcc " + conf['user'] + " (Y/n) :")
 		v = sys.stdin.readline().strip()
 		if v != "" and v.lower() != "y":
 			exit(0)
-	log("Sending mail")
+	log("Sending mail ... ")
 	msg = MIMEText("\n".join([ret, "", "// " + conf['name']]))
 	msg['Subject'] = 'Task report on E///projects'
 	msg['From'] = conf['user']
@@ -130,4 +143,5 @@ if conf['mail'] != "":
 	s = smtplib.SMTP('localhost')
 	s.sendmail(conf['user'], conf['mail'], msg.as_string())
 	s.quit()
-log("All Done")	
+log("Done\n")
+log()
