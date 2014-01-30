@@ -20,8 +20,8 @@ def Csv2Rep(csv):
 		"On Hold"     : ["On hold", "Background working", "When I feel for it"],
 	}
 	internal = { 
-		"1" : ["my", "internal"],
 		"0" : ["external", "ericsson"],
+		"1" : ["my", "internal"],
 	}
 	
 	ASSIGNMENT= ["task", "assignment"]
@@ -47,7 +47,8 @@ def Csv2Rep(csv):
 		else:
 			ret += "."
 		ret += "\n"
-		wl = wl+1;
+		if row[2] == "In Progress":
+			wl = wl+1;
 	
 	ret += "2) Anything preventing me to accomplish the tasks?\n"
 	ret += "     Not that I know of.\n"
