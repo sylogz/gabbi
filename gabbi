@@ -2,6 +2,10 @@
 
 from trace3 import Trace3
 from csv2rep import Csv2Rep
+
+import smtplib
+from email.mime.text import MIMEText
+
 import sys
 import csv
 import os
@@ -91,10 +95,8 @@ if not quiet:
 		f.write(conffilemagic + "\r\n")
 		w = csv.writer(f, delimiter=',', quotechar='"')
 		for c in conf:
-			print c, conf[c]
 			w.writerow([c, conf[c]])
 		f.close()
-		print "Updated configuration"
 
 log("")
 log("Logging in to trace3")
@@ -113,3 +115,19 @@ print ""
 print ret
 print ""
 log("")
+if conf['mail'] != "":
+	if not quiet:
+		print "Send this as mail to "+conf['mail']+" with from and bcc " + conf['user'] + " (Y/n) :",
+		v = sys.stdin.readline().strip()
+		if v != "" and v.lower() != "y":
+			exit(0)
+	log("Sending mail")
+	msg = MIMEText("\n".join([ret, "", "// " + conf['name']]))
+	msg['Subject'] = 'Task report on E///projects'
+	msg['From'] = conf['user']
+	msg['To'] = conf['mail']
+	msg['Bcc'] = conf['user']
+	s = smtplib.SMTP('localhost')
+	s.sendmail(conf['user'], conf['mail'], msg.as_string())
+	s.quit()
+log("All Done")	
