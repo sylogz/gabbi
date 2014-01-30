@@ -53,7 +53,12 @@ if not quiet:
 	print "Current configuration:"
 	print ""
 	for row in conf:
-		print " " + row.title() + " : " + conf[row]
+		print " " + row.title() + " : ",
+		if row.lower() == "pass":
+			print "*" * len(conf[row])
+		else:
+			print conf[row]
+
 	print ""
 	print "Use this configuration (Y/n)? ",
 	ok=sys.stdin.readline().strip()
