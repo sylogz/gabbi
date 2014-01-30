@@ -11,13 +11,17 @@ import random
 
 def Csv2Rep(csv):
 	ret = ""
-	DELIVERED = ["Completed", "Delivered", "Done with"]
-	WORKING_ON = ["Working on", "Working with", "Not done with"]
-	
-	NOT_STARTED = ["Retrived task", "New task", "Starting with"]
-
-	INTERNAL = ["my", "internal"]
-	EXTERNAL = ["external", "ericsson"]
+	status = {
+		"Delivered"   : ["Completed", "Delivered", "Done with"],
+		"Deleted"     : ["Done with"],
+		"Completed"   : ["Completed", "Finished"],
+		"In Progress" : ["Working on", "Working with", "Not done with"],
+		"Not Started" : ["Retrived task", "New task", "Starting  with"],
+	}
+	internal = { 
+		"0" : ["my", "internal"],
+		"1" : ["external", "ericsson"],
+	}
 	
 	ASSIGNMENT= ["task", "assignment"]
 	
@@ -30,24 +34,13 @@ def Csv2Rep(csv):
 	for row in csv:
 		if row[2] == "Status":
 			continue # Skip first row FIXME: use as dict
-		ret += "    "
-		if row[2] == "Delivered" or row[2] == "Deleted":
-			ret += rc(DELIVERED)
-		elif row[2] == "In Progress":
-			ret += rc(WORKING_ON)
-		elif row[2] == "Not Started":
-			ret += rc(NOT_STARTED)
-		else:
-			print "AAARGH: Status type not found, please add and submit"
-			print row[2]
-			raise
-		ret += " "
-		if row[3] == "1":
-			ret += rc(INTERNAL)
-		else:
-			ret += rc(EXTERNAL)
-		ret += " "
-		ret += rc(ASSIGNMENT) + " to " + row[5].lower()
+		ret += " ".join(["    ",
+			rc(status[row[2]]),
+			rc(internal[row[3]]),
+			rc(ASSIGNMENT),
+			"to",
+			row[5].lower()]
+		)
 		if ADD_LINK:
 			ret += "(%s)" % row[4]
 		else:
