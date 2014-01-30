@@ -40,12 +40,14 @@ def Csv2Rep(csv):
 		else:
 			print "AAARGH: Status type not found, please add and submit"
 			print row[2]
-			raise 
+			raise
+		ret += " "
 		if row[3] == "1":
 			ret += rc(INTERNAL)
 		else:
 			ret += rc(EXTERNAL)
-		ret += rc(ASSIGNMENT) + "to" + row[5].lower()
+		ret += " "
+		ret += rc(ASSIGNMENT) + " to " + row[5].lower()
 		if ADD_LINK:
 			ret += "(%s)" % row[4]
 		else:
