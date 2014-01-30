@@ -87,9 +87,4 @@ def mk():
 		print ""
 		print "//", sys.argv[2]
 
-try:
-	mk()
-except:
-	print "Unexpected error:", sys.exc_info()[0]
-	#raise
-	exit(1)
+mk()
