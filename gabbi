@@ -6,7 +6,9 @@ import sys
 import csv
 import os
 
-conffile='gabbi.csv'
+
+conffilemagic="format2"
+conffile=os.path.expanduser('~/.gabbirc')
 conf={
 	'user' : "", 
 	'pass' : "",
@@ -36,12 +38,15 @@ def log(string):
 		return
 	print string
 
-if os.path.isfile(conffile):
-	f = open(conffile, "r")
-	r = csv.reader(f, delimiter=',', quotechar='"')
+with open(conffile, "rb") as f:
+	r = f.readline()
+	if r.strip() == conffilemagic:
+		r = csv.reader(f, delimiter=',', quotechar='"')
+	else:
+		f.seek(0)
+		r = [[row[0][1:], row[1]] for row in csv.reader(f, delimiter='=', quotechar='\'')]
 	for row in r:
-		conf[row[0]] = row[1]
-	f.close()
+		conf[row[0]] = row[1] 
 
 if not quiet:
 	print ""
@@ -78,10 +83,13 @@ if not quiet:
 			conf['mail'] = v
 
 		f = open(conffile, "w+")
+		f.write(conffilemagic + "\r\n")
 		w = csv.writer(f, delimiter=',', quotechar='"')
 		for c in conf:
+			print c, conf[c]
 			w.writerow([c, conf[c]])
 		f.close()
+		print "Updated configuration"
 
 log("")
 log("Logging in to trace3")
