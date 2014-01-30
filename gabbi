@@ -1,0 +1,110 @@
+#!/usr/bin/env python2
+
+from trace3 import Trace3
+from csv2rep import Csv2Rep
+import sys
+import csv
+import os
+
+
+conffilemagic="format2"
+conffile=os.path.expanduser('~/.gabbirc')
+conf={
+	'user' : "", 
+	'pass' : "",
+	'name' : "",
+	'mail' : "",
+}
+
+quiet=False
+while len(sys.argv) > 1:
+	if sys.argv[1] == "-y":
+		quiet=True
+	elif sys.argv[1] == "-h":
+		print ""
+		print sys.argv[0] + " [-h|-y]"
+		print ""
+		print " -h  This help"
+		print " -y  Only print report and assume correctly configured"
+		print ""
+		exit(1)
+	else:
+		print "Unknown option '"+sys.argv[1]+"'"
+		exit(1)
+	del sys.argv[1]
+
+def log(string):
+	if quiet:
+		return
+	print string
+
+with open(conffile, "rb") as f:
+	r = f.readline()
+	if r.strip() == conffilemagic:
+		r = csv.reader(f, delimiter=',', quotechar='"')
+	else:
+		f.seek(0)
+		r = [[row[0][1:], row[1]] for row in csv.reader(f, delimiter='=', quotechar='\'')]
+	for row in r:
+		conf[row[0]] = row[1] 
+
+if not quiet:
+	print ""
+	print "Current configuration:"
+	print ""
+	for row in conf:
+		print " " + row.title() + " : " + conf[row]
+	print ""
+	print "Use this configuration (Y/n)? ",
+	ok=sys.stdin.readline().strip()
+
+	if len(ok) != 0 and ok.lower()[0] != "y":
+		print "Use dot (.) to keep configuration value and ^c to exit."
+		print ""
+		print " Your name ("+conf['name']+") :",
+		v = sys.stdin.readline().strip()
+		if v != '.':
+			conf['name'] = v
+
+		print "Trace3 User ("+conf['user']+") :",
+		v = sys.stdin.readline().strip()
+		if v != '.':
+			conf['user'] = v
+
+		print "Trace3 Password ("+conf['pass']+") :",
+		v = sys.stdin.readline().strip()
+		if v != '.':
+			conf['pass'] = v
+		
+
+		print "Auto mail to ("+conf['mail']+") :",
+		v = sys.stdin.readline().strip()
+		if v != '.':
+			conf['mail'] = v
+
+		f = open(conffile, "w+")
+		f.write(conffilemagic + "\r\n")
+		w = csv.writer(f, delimiter=',', quotechar='"')
+		for c in conf:
+			print c, conf[c]
+			w.writerow([c, conf[c]])
+		f.close()
+		print "Updated configuration"
+
+log("")
+log("Logging in to trace3")
+t3 = Trace3(conf['user'], conf['pass'])
+if not t3.login():
+	raise "Could not login"
+	exit(1)
+log("Getting csv report")
+r = csv.reader(t3.getcsv(), delimiter=',', quotechar='"')
+log("Logging out from trace3")
+t3.logout()
+log("Generating report")
+ret = Csv2Rep(r)
+log("")
+print ""
+print ret
+print ""
+log("")

@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import sys
 import os
 import random
 
@@ -10,21 +9,19 @@ import random
 # * Jonas Zetterberg
 # * Per Hallsmark
 
-if len(sys.argv) <= 1:
-	print ""
-	print "Usage", sys.argv[0], " [cvs-file] <name>"
-	print
-	exit(1)
-
-def mk():
-	DELIVERED = ["Completed", "Delivered", "Done with"]
-	WORKING_ON = ["Working on", "Working with", "Not done with"]
-	COMPLETED = ["Finished with", "Completed"]	
-	
-	NOT_STARTED = ["Retrived task", "New task", "Starting with"]
-
-	INTERNAL = ["my", "internal"]
-	EXTERNAL = ["external", "ericsson"]
+def Csv2Rep(csv):
+	ret = ""
+	status = {
+		"Delivered"   : ["Completed", "Delivered", "Done with"],
+		"Deleted"     : ["Done with"],
+		"Completed"   : ["Completed", "Finished"],
+		"In Progress" : ["Working on", "Working with", "Not done with"],
+		"Not Started" : ["Retrived task", "New task", "Starting  with"],
+	}
+	internal = { 
+		"0" : ["my", "internal"],
+		"1" : ["external", "ericsson"],
+	}
 	
 	ASSIGNMENT= ["task", "assignment"]
 	
@@ -33,58 +30,40 @@ def mk():
 	rc = random.choice
 	wl=0
 	
-	f = open(sys.argv[1])
-	
-	print "1) What tasks I worked on during this week?"
-	for line in f:
-		parts=[ p.strip("\" \\\n") for p in line.split(",") ]
-		if parts[2] == "Status":
-			continue
-		print "    ",
-		if parts[2] == "Delivered" or parts[2] == "Deleted":
-			print rc(DELIVERED),
-		elif parts[2] == "In Progress":
-			print rc(WORKING_ON),
-		elif parts[2] == "Not Started":
-			print rc(NOT_STARTED),
-		elif parts[2] == "Completed":
-			print rc(COMPLETED),
-		else:
-			print parts
-			print "Issue with " + parts[2]
-			raise 
-		if parts[3] == "1":
-			print rc(INTERNAL),
-		else:
-			print rc(EXTERNAL),
-		print rc(ASSIGNMENT), "to", parts[6].lower(),
+	ret += "1) What tasks I worked on during this week?\n"
+	for row in csv:
+		if row[2] == "Status":
+			continue # Skip first row FIXME: use as dict
+		ret += " ".join(["    ",
+			rc(status[row[2]]),
+			rc(internal[row[3]]),
+			rc(ASSIGNMENT),
+			"to",
+			row[5].lower()]
+		)
 		if ADD_LINK:
-			print "(%s)" % parts[4]
+			ret += "(%s)" % row[4]
 		else:
-			print "."
+			ret += "."
+		ret += "\n"
 		wl = wl+1;
 	
-	print "2) Anything preventing me to accomplish the tasks?"
-	print "     Not that I know of."
+	ret += "2) Anything preventing me to accomplish the tasks?\n"
+	ret += "     Not that I know of.\n"
 	
-	print "3) My workload (I am working more than normal time? Less?)"
+	ret += "3) My workload (I am working more than normal time? Less?)\n"
 	if wl <= 4:
-		print "     Normal workload"
+		ret += "     Normal workload\n"
 	elif wl <= 6:
-		print "     High workload"
+		ret += "     High workload\n"
 	elif wl <= 8:
-		print "     Very high workload"
+		ret += "     Very high workload\n"
 	else:
-		print "     I am hitting the wall!"
+		ret += "     I am hitting the wall!\n"
 	
-	print "4) Any new opportunity for business I have heard?"
+	ret += "4) Any new opportunity for business I have heard?\n"
 	if wl < 5:
-		print "     No" 
+		ret += "     No\n" 
 	else:
-		print "     There seems to be a need for more consultants at my workplace"
-	
-	if len(sys.argv) >= 3:
-		print ""
-		print "//", sys.argv[2]
-
-mk()
+		ret += "     There seems to be a need for more consultants at my workplace"
+	return ret
