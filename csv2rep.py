@@ -17,6 +17,7 @@ def Csv2Rep(csv):
 		"Completed"   : ["Completed", "Finished"],
 		"In Progress" : ["Working on", "Working with", "Not done with"],
 		"Not Started" : ["Retrived task", "New task", "Starting  with"],
+		"On Hold"     : ["On hold", "Background working", "When I feel for it"],
 	}
 	internal = { 
 		"0" : ["my", "internal"],
