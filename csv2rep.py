@@ -20,8 +20,8 @@ def Csv2Rep(csv):
 		"On Hold"     : ["On hold", "Background working", "When I feel for it"],
 	}
 	internal = { 
-		"0" : ["my", "internal"],
-		"1" : ["external", "ericsson"],
+		"1" : ["my", "internal"],
+		"0" : ["external", "ericsson"],
 	}
 	
 	ASSIGNMENT= ["task", "assignment"]
