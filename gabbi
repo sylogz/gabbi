@@ -140,8 +140,12 @@ if conf['mail'] != "":
 	msg['From'] = conf['user']
 	msg['To'] = conf['mail']
 	msg['Bcc'] = conf['user']
-	s = smtplib.SMTP('localhost')
-	s.sendmail(conf['user'], conf['mail'], msg.as_string())
-	s.quit()
+	try:
+		s = smtplib.SMTP('localhost')
+		s.sendmail(conf['user'], conf['mail'], msg.as_string())
+		s.quit()
+	except:
+		info("Could not send report, you'll have to do it manually")
+		log()
 log("Done\n")
 log()
