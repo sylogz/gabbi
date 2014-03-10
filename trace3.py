@@ -4,6 +4,7 @@ import urllib
 import cookielib
 
 class Trace3():
+""" Trace3 module used to login to the external trace3 module and extract the work csv file """
 	def __init__(self, user, password, baseurl='https://trace3.windriver.com/'):
 		cj = cookielib.CookieJar()
 		self.baseurl = baseurl

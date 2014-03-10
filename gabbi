@@ -10,6 +10,7 @@ import sys
 import csv
 import os
 
+""" Main application used to extract trace3 and convert to report format, can also mail anyone with the result"""
 
 conffilemagic="format2"
 conffile=os.path.expanduser('~/.gabbirc')
