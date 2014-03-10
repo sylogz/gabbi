@@ -13,6 +13,7 @@ def Csv2Rep(csv):
 	ret = ""
 	status = {
 		"Delivered"   : ["Completed", "Delivered", "Done with"],
+		"Blocked"     : ["Blocked", "Could not work with"],
 		"Deleted"     : ["Done with"],
 		"Completed"   : ["Completed", "Finished"],
 		"In Progress" : ["Working on", "Working with", "Not done with"],
