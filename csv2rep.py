@@ -10,7 +10,7 @@ import random
 # * Per Hallsmark
 
 def Csv2Rep(csv):
-"""Converts a csv file from trace3 to the stated report format"""
+	"""Converts a csv file from trace3 to the stated report format"""
 	ret = ""
 	status = {
 		"Delivered"   : ["Completed", "Delivered", "Done with"],
